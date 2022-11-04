@@ -1,6 +1,7 @@
 const { PrismaClient } =require('@prisma/client');
 // import express from 'express'
 const express=require('express');
+const jwtDecode = require('jwt-decode');
 
 const prisma = new PrismaClient()
 const app = express()
@@ -12,6 +13,25 @@ app.use(express.json())
   // ... you will write your Prisma Client queries here
 //   const allUsers = await prisma.account.findMany()
 //   console.log(allUsers)
+app.get(`/verify_user`, async (req, res) => {
+  const bearerHeader = req.headers['authorization'];
+  if(bearerHeader == null || bearerHeader == undefined){
+    res.status(500);
+    res.json({"message":"Bearer Token not Found"})
+  }else{
+  var decoded = await jwtDecode(bearerHeader)
+  var email = decoded.email
+  const verifyUser = await prisma.account.findUnique({
+    where: { email:decoded.email },
+    })
+    if(verifyUser == null || verifyUser == undefined ){
+      res.status(500);
+  res.json({"message":"Unauthorized Access"})
+    }else{
+      res.json(verifyUser)
+    }
+  }
+  })
 
 //Function to create an account
 
