@@ -8,7 +8,18 @@ const app = express()
 const cors = require('cors')
 app.options('*', cors())
 const port = process.env.PORT || 3000;
-
+var CORS_Accept_Origin = [
+  "http://localhost:3000"
+];
+app.use(function (req, res, next) {
+  let origin = req.headers.origin;
+  if (CORS_Accept_Origin.indexOf(origin) > -1) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
+  next();
+});
 //app.use(cors())
 app.use(express.json())
 
