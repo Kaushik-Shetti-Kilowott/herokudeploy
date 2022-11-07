@@ -5,8 +5,8 @@ const jwtDecode = require('jwt-decode');
 
 const prisma = new PrismaClient()
 const app = express()
-const cors = require('cors')
-app.options('*', cors())
+// const cors = require('cors')
+// app.options('*', cors())
 const port = process.env.PORT || 3000;
 var CORS_Accept_Origin = [
   "http://localhost:3000"
