@@ -6,22 +6,24 @@ const jwtDecode = require('jwt-decode');
 const prisma = new PrismaClient()
 const app = express()
 const cors = require('cors')
+app.options('*', cors())
 const port = process.env.PORT || 3000;
 
-app.use(cors())
+//app.use(cors())
 app.use(express.json())
-app.use(function(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', '"Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
+
+// app.use(function(req, res, next) {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//   res.setHeader('Access-Control-Allow-Headers', 'Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With');
+//   res.setHeader('Access-Control-Allow-Credentials', true);
+//   next();
+// });
 
   // ... you will write your Prisma Client queries here
 //   const allUsers = await prisma.account.findMany()
 //   console.log(allUsers)
-app.get(`/verify_user`, async (req, res) => {
+app.get(`/verify_user`, cors(),async (req, res) => {
   const bearerHeader = req.headers['authorization'];
   if(bearerHeader == null || bearerHeader == undefined){
     res.status(500);
@@ -51,7 +53,7 @@ app.get('/', async (req, res) => {
   res.end()
 })
 
-app.post(`/signup`, async (req, res) => {
+app.post(`/signup`,cors(), async (req, res) => {
   const { name, email, status } = req.body
 
 const results=await prisma.account.create({
@@ -66,7 +68,7 @@ const results=await prisma.account.create({
 })  
 
   //Functon to read an account
-app.get('/user/:id', async (req, res) => {
+app.get('/user/:id',cors(), async (req, res) => {
   const { id } = req.params
 const read = await prisma.account.findUnique({
     where: { id:Number(id) },
@@ -79,7 +81,7 @@ const read = await prisma.account.findUnique({
 })
 
 //Function to update account
-app.put('/publish/:id', async (req, res) => {
+app.put('/publish/:id', cors(),async (req, res) => {
   const { id } = req.params
   const { name } = req.body
 
@@ -91,7 +93,7 @@ const update = await prisma.account.update({
 })
 
 //Function to delete an account
-app.delete(`/delete/:id`, async (req, res) => {
+app.delete(`/delete/:id`,cors(), async (req, res) => {
   const { id } = req.params
 const deletee = await prisma.account.delete({
     where: { id: Number(id) }
