@@ -57,7 +57,7 @@ app.get('/', async (req, res) => {
   res.end()
 })
 app.post(`/account/create`,async (req, res) => {
-  const { name, parentAccount,crmId,userId } = req.body
+  const { name, parentAccount,crmId,id } = req.body
   if(name == null || name == undefined || name == ""){
     res.status(500);
     res.json({"message":"Account Name is Required"})
@@ -66,7 +66,7 @@ const results=await prisma.account.create({
     data: {
       id:cuid(),
       name,
-      creatorId:userId,
+      creatorId:id,
       status:"Active",
       parentAccount,
       localTimeZone:new Date().toString(),
