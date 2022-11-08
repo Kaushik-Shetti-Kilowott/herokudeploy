@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Account" (
-    "id" TEXT,
+    "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT,
@@ -24,6 +24,9 @@ CREATE TABLE "User" (
     "localTimeZone" TEXT,
     "locale" TEXT NOT NULL DEFAULT 'en_US'
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Account_id_key" ON "Account"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_email_key" ON "Account"("email");
