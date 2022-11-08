@@ -24,13 +24,13 @@ app.use(function (req, res, next) {
 //app.use(cors())
 app.use(express.json())
 
-// app.use(function(req, res, next) {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-//   res.setHeader('Access-Control-Allow-Headers', 'Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-//   next();
-// });
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 
   // ... you will write your Prisma Client queries here
 //   const allUsers = await prisma.account.findMany()
