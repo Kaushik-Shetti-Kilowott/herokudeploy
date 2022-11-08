@@ -57,7 +57,7 @@ app.get('/', async (req, res) => {
   res.end()
 })
 app.post(`/account/create`,async (req, res) => {
-  const { name, parentAccount,crmId,id,email } = req.body
+  const { name, parentAccount,crmId,userId } = req.body
   if(name == null || name == undefined || name == ""){
     res.status(500);
     res.json({"message":"Account Name is Required"})
@@ -66,12 +66,11 @@ const results=await prisma.account.create({
     data: {
       id:cuid(),
       name,
-      creatorId:id,
+      creatorId:userId,
       status:"Active",
       parentAccount,
       localTimeZone:new Date().toString(),
       crmId,
-      email
     },
   })
   res.json(results)
@@ -102,11 +101,11 @@ const results=await prisma.account.update({
   where: { id: String(id) },
     data: {
       name,
-      creatorId:id,
+      creatorId:userId,
       status,
       parentAccount,
       localTimeZone:new Date().toString(),
-      updatedAt:new Date(),
+      updatedAt:new Date().getTime(),
       crmId,
     },
   })
@@ -128,7 +127,7 @@ app.post(`/user/create`,async (req, res) => {
     res.json({"message":"email is Required"})
   }else{
   let id = cuid();
-const results=await prisma.account.create({
+const results=await prisma.user.create({
    data : {
     id,
     accountId,
@@ -149,7 +148,7 @@ app.get('/user/fetch',async (req, res) => {
     res.status(500);
     res.json({"message":"user Id is required"})
   }
-const read = await prisma.account.findUnique({
+const read = await prisma.user.findUnique({
     where: { id:String(id) },
     select:{
         name:true
@@ -161,7 +160,7 @@ const read = await prisma.account.findUnique({
 //Function to update account
 app.put('/user/update',async (req, res) => {
   const { id,name } = req.body
-const update = await prisma.account.update({
+const update = await prisma.user.update({
     where: { id: String(id) },
     data: { name },
   })

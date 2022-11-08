@@ -36,7 +36,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   email   String   @unique
-  name    String?
+  firstName    String?
+  lastName    String?
   localTimeZone String?
   locale String @default("en_US")
   // created   Account[]
