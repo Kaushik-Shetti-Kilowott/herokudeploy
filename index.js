@@ -9,7 +9,8 @@ const app = express()
 // app.options('*', cors())
 const port = process.env.PORT || 3000;
 var CORS_Accept_Origin = [
-  "http://localhost:3000"
+  "http://localhost:3000",
+  "http://localhost:4000",
 ];
 app.use(function (req, res, next) {
   let origin = req.headers.origin;
