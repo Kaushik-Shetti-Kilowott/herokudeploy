@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
   // ... you will write your Prisma Client queries here
 //   const allUsers = await prisma.account.findMany()
 //   console.log(allUsers)
-app.post(`/verify_user`,async (req, res) => {
+app.get(`/verify_user`,async (req, res) => {
   const {email} = req.body
   if(email == null || email == undefined){
   const bearerHeader = req.headers['authorization'];
@@ -75,7 +75,7 @@ app.get('/', async (req, res) => {
   res.end()
 })
 app.post(`/account/create`,async (req, res) => {
-  const { name, parentAccount,crmId,id} = req.body
+  const { name, parentAccount,crmId,id,email } = req.body
   if(name == null || name == undefined || name == ""){
     res.status(500);
     res.json({"message":"Account Name is Required"})
@@ -84,11 +84,12 @@ const results=await prisma.account.create({
     data: {
       id:cuid(),
       name,
+      email,
       creatorId:id,
       status:"Active",
       parentAccount,
       localTimeZone:new Date().toString(),
-      crmId
+      crmId,
     },
   })
   res.json(results)
@@ -124,7 +125,7 @@ const results=await prisma.account.delete({
   res.json({"message":"Account Deleted"})
 })
 app.post(`/user/create`,async (req, res) => {
-  const {accountId,firstName,lastName,email,id} = req.body
+  const {accountId,firstName,lastName,email } = req.body
   if(firstName == null || firstName == undefined || firstName == ""){
     res.status(500);
     res.json({"message":"First name is Required"})
@@ -134,9 +135,6 @@ app.post(`/user/create`,async (req, res) => {
   }else if(email == null || email == undefined || email == ""){
     res.status(500);
     res.json({"message":"email is Required"})
-  }else if(id == null || id == undefined || id == ""){
-    res.status(500);
-    res.json({"message":"UserId is Required"})
   }else{
   let id = cuid();
 const results=await prisma.user.create({
