@@ -9,7 +9,7 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 model Account {
-  id      String?
+  id      String @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name   String?
@@ -32,13 +32,13 @@ model Account {
 //   userId Int     @unique
 // }
 model User {
-  id    String?
+  id    String @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   email   String   @unique
   firstName    String?
-  accountId String?
   lastName    String?
+  accountId String?
   status String?
   created String?
   localTimeZone String?

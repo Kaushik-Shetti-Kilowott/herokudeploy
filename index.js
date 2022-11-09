@@ -33,13 +33,15 @@ app.use(function(req, res, next) {
 //   const allUsers = await prisma.account.findMany()
 //   console.log(allUsers)
 app.get(`/verify_user`,async (req, res) => {
+  const {email} = req.body
+  if(email == null || email == undefined){
   const bearerHeader = req.headers['authorization'];
   if(bearerHeader == null || bearerHeader == undefined){
     res.status(500);
     res.json({"message":"Bearer Token not Found"})
   }else{
   var decoded = await jwtDecode(bearerHeader)
-  const verifyUser = await prisma.account.findUnique({
+  const verifyUser = await prisma.user.findUnique({
     where: { email:decoded.email },
     })
     if(verifyUser == null || verifyUser == undefined ){
@@ -49,6 +51,17 @@ app.get(`/verify_user`,async (req, res) => {
       res.json(verifyUser)
     }
   }
+}else{
+  var verifyUser1 = await prisma.user.findUnique({
+    where: { email:email },
+    })
+    if(verifyUser1 == null || verifyUser1 == undefined ){
+      res.status(401);
+  res.json({"message":"Unauthorized Access"})
+    }else{
+      res.json(verifyUser1)
+    }
+}
   })
 //Function to create an account
 app.get('/', async (req, res) => {
@@ -57,7 +70,7 @@ app.get('/', async (req, res) => {
   res.end()
 })
 app.post(`/account/create`,async (req, res) => {
-  const { name, parentAccount,crmId,userId } = req.body
+  const { name, parentAccount,crmId,userId,email } = req.body
   if(name == null || name == undefined || name == ""){
     res.status(500);
     res.json({"message":"Account Name is Required"})
@@ -66,7 +79,9 @@ const results=await prisma.account.create({
     data: {
       id:cuid(),
       name,
+      email,
       creatorId:userId,
+      creator:userId,
       status:"Active",
       parentAccount,
       localTimeZone:new Date().toString(),
@@ -101,11 +116,11 @@ const results=await prisma.account.update({
   where: { id: String(id) },
     data: {
       name,
-      creatorId:userId,
+      creatorId:id,
       status,
       parentAccount,
       localTimeZone:new Date().toString(),
-      updatedAt:new Date().getTime(),
+      updatedAt:new Date(),
       crmId,
     },
   })
@@ -151,7 +166,8 @@ app.get('/user/fetch',async (req, res) => {
 const read = await prisma.user.findUnique({
     where: { id:String(id) },
     select:{
-        name:true
+        firstName:true,
+        lastName:true
     }
   })
   console.log("read",read);
@@ -159,10 +175,13 @@ const read = await prisma.user.findUnique({
 })
 //Function to update account
 app.put('/user/update',async (req, res) => {
-  const { id,name } = req.body
+  const { id,firstName,lastName } = req.body
 const update = await prisma.user.update({
     where: { id: String(id) },
-    data: { name },
+    data: {
+       firstName,
+       lastName
+      },
   })
   if(update == null || update == undefined){
     res.status(500);
@@ -173,7 +192,7 @@ const update = await prisma.user.update({
 //Function to delete an account
 app.delete(`/user/delete`,async (req, res) => {
   const { id } = req.body
-const deleteUser = await prisma.account.delete({
+const deleteUser = await prisma.user.delete({
     where: { id: String(id) }
   })
   if(deleteUser == null || deleteUser == undefined){
