@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
   // ... you will write your Prisma Client queries here
 //   const allUsers = await prisma.account.findMany()
 //   console.log(allUsers)
-app.post(`/verify_user`,async (req, res) => {
+app.get(`/verify_user`,async (req, res) => {
   const {email} = req.body
   if(email == null || email == undefined){
   const bearerHeader = req.headers['authorization'];
@@ -41,7 +41,7 @@ app.post(`/verify_user`,async (req, res) => {
     res.json({"message":"Bearer Token not Found"})
   }else{
   var decoded = await jwtDecode(bearerHeader)
-  const verifyUser = await prisma.user.findUnique({
+  const verifyUser = await prisma.account.findUnique({
     where: { email:decoded.email },
     })
     if(verifyUser == null || verifyUser == undefined ){
@@ -52,7 +52,7 @@ app.post(`/verify_user`,async (req, res) => {
     }
   }
 }else{
-  var verifyUser1 = await prisma.user.findUnique({
+  var verifyUser1 = await prisma.account.findUnique({
     where: { email:email },
     })
     if(verifyUser1 == null || verifyUser1 == undefined ){
@@ -61,10 +61,10 @@ app.post(`/verify_user`,async (req, res) => {
     }else{
       var accountId = verifyUser1.accountId
       const fetchAccDetails = await prisma.account.findUnique({
-        where: { id:accountId },
+        where: { accountId:accountId },
         })
        verifyUser1.accountName = fetchAccDetails.name
-       res.json(verifyUser1)
+      res.json(verifyUser1)
     }
 }
   })
@@ -75,22 +75,17 @@ app.get('/', async (req, res) => {
   res.end()
 })
 app.post(`/account/create`,async (req, res) => {
-  const { name, parentAccount,crmId,userId,email } = req.body
+  const { name, parentAccount,crmId,id,email } = req.body
   if(name == null || name == undefined || name == ""){
     res.status(500);
     res.json({"message":"Account Name is Required"})
-  }
-  if(email == null || email == undefined || email == ""){
-    res.status(500);
-    res.json({"message":"Account Email is Required"})
   }
 const results=await prisma.account.create({
     data: {
       id:cuid(),
       name,
       email,
-      creatorId:userId,
-      creator:userId,
+      creatorId:id,
       status:"Active",
       parentAccount,
       localTimeZone:new Date().toString(),
@@ -115,28 +110,19 @@ app.get(`/account/fetch`,async (req, res) => {
   res.json(fetch)
   }
 })
-app.put(`/account/edit`,async (req, res) => {
-  const { name,id,status,parentAccount,crmId,} = req.body
+app.delete(`/account/delete`,async (req, res) => {
+  const { id} = req.body
   if(id == null || id == undefined || id == ""){
     res.status(500);
-    res.json({"message":"Userid is Required"})
+    res.json({"message":"Account is Required"})
   }
-const results=await prisma.account.update({
+const results=await prisma.account.delete({
   where: { id: String(id) },
-    data: {
-      name,
-      creatorId:id,
-      status,
-      parentAccount,
-      localTimeZone:new Date().toString(),
-      updatedAt:new Date(),
-      crmId,
-    },
-  })
+    })
   if(results == null || results == undefined){
-    res.json({"message":"Invalid User Id"})
+    res.json({"message":"Invalid Account Id"})
   }
-  res.json(results)
+  res.json({"message":"Account Deleted"})
 })
 app.post(`/user/create`,async (req, res) => {
   const {accountId,firstName,lastName,email } = req.body
@@ -173,24 +159,17 @@ app.get('/user/fetch',async (req, res) => {
     res.json({"message":"user Id is required"})
   }
 const read = await prisma.user.findUnique({
-    where: { id:String(id) },
-    select:{
-        firstName:true,
-        lastName:true
-    }
+    where: { id:String(id) }
   })
   console.log("read",read);
   res.json(read)
 })
 //Function to update account
 app.put('/user/update',async (req, res) => {
-  const { id,firstName,lastName } = req.body
+  const { id,name } = req.body
 const update = await prisma.user.update({
     where: { id: String(id) },
-    data: {
-       firstName,
-       lastName
-      },
+    data: { name },
   })
   if(update == null || update == undefined){
     res.status(500);
@@ -201,7 +180,7 @@ const update = await prisma.user.update({
 //Function to delete an account
 app.delete(`/user/delete`,async (req, res) => {
   const { id } = req.body
-const deleteUser = await prisma.user.delete({
+const deleteUser = await prisma.account.delete({
     where: { id: String(id) }
   })
   if(deleteUser == null || deleteUser == undefined){
