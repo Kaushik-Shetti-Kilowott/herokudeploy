@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
   // ... you will write your Prisma Client queries here
 //   const allUsers = await prisma.account.findMany()
 //   console.log(allUsers)
-app.get(`/verify_user`,async (req, res) => {
+app.post(`/verify_user`,async (req, res) => {
   const {email} = req.body
   if(email == null || email == undefined){
   const bearerHeader = req.headers['authorization'];
