@@ -61,7 +61,7 @@ app.post(`/verify_user`,async (req, res) => {
     }else{
       var accountId = verifyUser1.accountId
       const fetchAccDetails = await prisma.account.findUnique({
-        where: { accountId:accountId },
+        where: { id:accountId },
         })
        verifyUser1.accountName = fetchAccDetails.name
       res.json(verifyUser1)
