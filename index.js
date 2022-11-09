@@ -110,6 +110,31 @@ app.get(`/account/fetch`,async (req, res) => {
   res.json(fetch)
   }
 })
+
+app.put(`/account/edit`,async (req, res) => {
+  const { name,id,status,parentAccount,crmId,} = req.body
+  if(id == null || id == undefined || id == ""){
+    res.status(500);
+    res.json({"message":"Userid is Required"})
+  }
+const results=await prisma.account.update({
+  where: { id: String(id) },
+    data: {
+      name,
+      creatorId:userId,
+      status,
+      parentAccount,
+      localTimeZone:new Date().toString(),
+      updatedAt:new Date().getTime(),
+      crmId,
+    },
+  })
+  if(results == null || results == undefined){
+    res.json({"message":"Invalid User Id"})
+  }
+  res.json(results)
+})
+
 app.delete(`/account/delete`,async (req, res) => {
   const { id} = req.body
   if(id == null || id == undefined || id == ""){
