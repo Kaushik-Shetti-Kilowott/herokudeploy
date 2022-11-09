@@ -52,7 +52,7 @@ app.post(`/verify_user`,async (req, res) => {
     }
   }
 }else{
-  var verifyUser1 = await prisma.account.findUnique({
+  var verifyUser1 = await prisma.user.findUnique({
     where: { email:email },
     })
     if(verifyUser1 == null || verifyUser1 == undefined ){
@@ -180,7 +180,7 @@ const update = await prisma.user.update({
 //Function to delete an account
 app.delete(`/user/delete`,async (req, res) => {
   const { id } = req.body
-const deleteUser = await prisma.account.delete({
+const deleteUser = await prisma.user.delete({
     where: { id: String(id) }
   })
   if(deleteUser == null || deleteUser == undefined){
