@@ -59,7 +59,12 @@ app.post(`/verify_user`,async (req, res) => {
       res.status(401);
   res.json({"message":"Unauthorized Access"})
     }else{
-      res.json(verifyUser1)
+      var accountId = verifyUser1.accountId
+      const fetchAccDetails = await prisma.account.findUnique({
+        where: { id:accountId },
+        })
+       verifyUser1.accountName = fetchAccDetails.name
+       res.json(verifyUser1)
     }
 }
   })
@@ -74,6 +79,10 @@ app.post(`/account/create`,async (req, res) => {
   if(name == null || name == undefined || name == ""){
     res.status(500);
     res.json({"message":"Account Name is Required"})
+  }
+  if(email == null || email == undefined || email == ""){
+    res.status(500);
+    res.json({"message":"Account Email is Required"})
   }
 const results=await prisma.account.create({
     data: {
