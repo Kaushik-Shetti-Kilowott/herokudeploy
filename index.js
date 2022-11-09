@@ -41,7 +41,7 @@ app.post(`/verify_user`,async (req, res) => {
     res.json({"message":"Bearer Token not Found"})
   }else{
   var decoded = await jwtDecode(bearerHeader)
-  const verifyUser = await prisma.account.findUnique({
+  const verifyUser = await prisma.user.findUnique({
     where: { email:decoded.email },
     })
     if(verifyUser == null || verifyUser == undefined ){
