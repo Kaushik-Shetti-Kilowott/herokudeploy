@@ -121,7 +121,6 @@ const results=await prisma.account.update({
   where: { id: String(id) },
     data: {
       name,
-      creatorId:userId,
       status,
       parentAccount,
       localTimeZone:new Date().toString(),
