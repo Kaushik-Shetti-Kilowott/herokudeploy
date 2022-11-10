@@ -21,6 +21,7 @@ const port = process.env.PORT || 3000;
 //   next();
 // });
 //app.use(cors())
+
 app.use(express.json())
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -124,7 +125,7 @@ const results=await prisma.account.update({
       status,
       parentAccount,
       localTimeZone:new Date().toString(),
-      updatedAt:new Date().getTime(),
+      updatedAt:new Date(),
       crmId,
     },
   })
